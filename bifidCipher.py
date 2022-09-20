@@ -3,7 +3,7 @@ Palacios Rodriguez Diego Octavio
 Bifid Cypher
 """
 import re
-from typing import final
+
 
 
 def checkRepeat(secretKey):
@@ -63,6 +63,7 @@ def cypher(message, matrix):
     cyphered = getNewMessage(finalCoords, matrix)
     print(cyphered)
 
+
 def getNewMessage(finalCoords, matrix):
     #coordsInPairs = list(zip(finalCoords, finalCoords[1:] + finalCoords[:1]))
     #print(coordsInPairs)
@@ -76,13 +77,26 @@ def getNewMessage(finalCoords, matrix):
         y = finalCoordsCopy.pop(0)
         
         print(x, y)
-        newMessage += matrix[x][y]
+        newMessage += matrix[x][y] #it should be x and y instead of y and x, but for the intent of the homework it'll be y and x.
         print(newMessage)
         if not finalCoordsCopy: break
 
     return(newMessage)
     
+def getOldMessage(fullOldCoords, matrix):
+    oldMessage = ""
+    length = len(fullOldCoords)
+    fullOldCoordsCopy = fullOldCoords
 
+    for i in range(int(length / 2) + 1):
+        x = int(fullOldCoordsCopy.pop(0))
+        y = int(fullOldCoordsCopy.pop(0))
+
+        print(x, y) #comment this line to avoid revealing the cipher
+        oldMessage += matrix[x][y]
+        print(oldMessage) #comment this line to avoid revealing the cipher
+        if not fullOldCoordsCopy: break
+    return(oldMessage)
 
 
 def getCoords(message, matrix):
@@ -112,24 +126,128 @@ def getCoords(message, matrix):
     return(finalCoords)
 
 
+def decypher(cyphered, matrix):
+    print(getOldMessage(getOldCoords(getCoords(cyphered, matrix)), matrix))
+    
+
+def getOldCoords(coords):
+    oldCoords = ''.join(str(coords))
+
+    firstHalf = oldCoords[:len(oldCoords)//2]
+    secondHalf = oldCoords[len(oldCoords)//2:]
+    print(firstHalf)
+    print(secondHalf)
+
+    fH = "".join(c for c in firstHalf if c.isdecimal())
+    print(fH)
+    sH = "".join(c for c in secondHalf if c.isdecimal())
+    print(sH)
+
+    firstHalf = list(fH)
+    secondHalf = list(sH)
+
+    stepOneCoords = list()
+    
+    for coord in fH:
+        x = firstHalf.pop(0)
+        y = secondHalf.pop(0)
+        stepOneCoords.append(x)
+        stepOneCoords.append(y)
+
+    print(stepOneCoords)
+    print("hasta aqui todo OKKKKKKK")
+
+    stepTwoCoords = ''.join(str(stepOneCoords))
+    firstHalf = stepTwoCoords[:len(stepTwoCoords)//2]
+    secondHalf = stepTwoCoords[len(stepTwoCoords)//2:]
+    
+    fH = "".join(c for c in firstHalf if c.isdecimal())
+    print(fH)
+    sH = "".join(c for c in secondHalf if c.isdecimal())
+    print(sH)
+
+    firstHalf = list(fH)
+    secondHalf = list(sH)
+
+    fullOldCoords = list()
+    
+    for coord in fH:
+        x = firstHalf.pop(0)
+        y = secondHalf.pop(0)
+        fullOldCoords.append(x)
+        fullOldCoords.append(y)
+
+    return fullOldCoords
+
+
+
+
+print("Welcome to Bifid Cipher.")
+
+
 while(True):
-    secretKey = input("Please type your secret key.\nYour key should only contain letters in the English alphabet: \n>>")
-    if (re.search("Ññ[0-9]", secretKey)):
-        print("Please type a message that contains ONLY characters in the English alphabet.")
-    else: 
-        matrix = fillMatrix(checkRepeat(secretKey.lower()))
-        print(matrix)
-        break
+    try:
+        print("1. Encrypt a message.")
+        print("2. Decrypt a message.")
+        option = int( input("Type the number of option you want to select, or any other number to exit:\n>>"))
+    except:
+        print("Please, type a valid input.")
+        continue
+    
+
+
+    if option == 1:
+        while(True):
+            secretKey = input("Please type your secret key.\nYour key should only contain letters in the English alphabet: \n>>")
+            if (re.search("Ññ[0-9]", secretKey)):
+                print("Please type a message that contains ONLY characters in the English alphabet.")
+            else: 
+                matrix = fillMatrix(checkRepeat(secretKey.lower()))
+                print(matrix)
+                break
+        
+        while(True):
+            message = input("\nPlease type the message you wish to cypher.\nYour message should only contain letters in the English alphabet: \n>>")
+            if (re.search("Ññ[0-9]", message)):
+                print("Please type a message that contains ONLY characters in the English alphabet.")
+            else:
+                message.strip()
+                cypher(message.lower(), matrix)
+                break
+    
 
 
 
-while(True):
-    message = input("\nPlease type the message you wish to cypher.\nYour message should only contain letters in the English alphabet: \n>>")
-    if (re.search("Ññ[0-9]", message)):
-        print("Please type a message that contains ONLY characters in the English alphabet.")
+    elif option == 2:
+        while(True):
+            secretKey = input("\nPlease type the secret key needed to decypher the message.\nYour key should only contain letters in the English alphabet: \n>>")
+            if (re.search("Ññ[0-9]", secretKey)):
+                print("Please type a message that contains ONLY characters in the English alphabet.")
+            else: 
+                matrix = fillMatrix(checkRepeat(secretKey.lower()))
+                print(matrix)
+                break
+        
+        while(True):
+            cyphered = input("\nPlease type the message you wish to decrypt.\nYour message should only contain letters in the English alphabet: \n>>")
+            if (re.search("Ññ[0-9]", cyphered)):
+                print("Please type a message that contains ONLY characters in the English alphabet.")
+            else:
+                decypher(cyphered.lower(), matrix)
+                break
+    
     else:
-        cypher(message.lower(), matrix)
         break
+
+print("Bye (: ")
+
+
+
+
+    
+
+
+
 
 
 
