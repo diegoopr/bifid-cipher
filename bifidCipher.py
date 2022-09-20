@@ -3,6 +3,7 @@ Palacios Rodriguez Diego Octavio
 Bifid Cypher
 """
 import re
+from typing import final
 
 
 def checkRepeat(secretKey):
@@ -58,11 +59,33 @@ def fillMatrix(nonRepeated):
 
 
 def cypher(message, matrix):
-    findCoords(message, matrix)
+    finalCoords = getCoords(message, matrix)
+    cyphered = getNewMessage(finalCoords, matrix)
+    print(cyphered)
+
+def getNewMessage(finalCoords, matrix):
+    #coordsInPairs = list(zip(finalCoords, finalCoords[1:] + finalCoords[:1]))
+    #print(coordsInPairs)
+    
+    newMessage = ""
+    length = len(finalCoords)
+    finalCoordsCopy = finalCoords
+    
+    for i in range(int(length / 2) + 1):
+        x = finalCoordsCopy.pop(0)
+        y = finalCoordsCopy.pop(0)
+        
+        print(x, y)
+        newMessage += matrix[x][y]
+        print(newMessage)
+        if not finalCoordsCopy: break
+
+    return(newMessage)
+    
 
 
-def findCoords(message, matrix):
-    print("work in progress")
+
+def getCoords(message, matrix):
     coordsRow = list()
     coordsCol = list()
     for letters in message:
